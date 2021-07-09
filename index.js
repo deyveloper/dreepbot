@@ -76,10 +76,12 @@ async function listMajors(auth) {
                 const rowData = colorSheet.data.sheets[0].data[0].rowData;
                 const rowDataLength = rowData.length;
                 for (let j = 2; j < rowDataLength; j++) {
-                    const cellBackcolor = rowData[j].values[0].effectiveFormat.backgroundColor;
-                    const colorValue = cellBackcolor.red * cellBackcolor.green;
-                    if (colorValue === 1 && cellBackcolor.blue) continue;
-                    colorsCount[colorValue]++;
+                    if (rowData[j].values) {
+                      const cellBackcolor = rowData[j].values[0].effectiveFormat.backgroundColor;
+                      const colorValue = cellBackcolor.red * cellBackcolor.green;
+                      if (colorValue === 1 && cellBackcolor.blue) continue;
+                      colorsCount[colorValue]++;
+                    }
                 }
                 collectedTodaysData[i] = {
                     colors: {
