@@ -76,7 +76,10 @@ async function listMajors(auth) {
                 const rowData = colorSheet.data.sheets[0].data[0].rowData;
                 const rowDataLength = rowData.length;
                 for (let j = 2; j < rowDataLength; j++) {
-                    if (rowData[j].values) {
+                    if ( rowData[j].values
+                        && rowData[j].values[0]
+                        && rowData[j].values[0].effectiveFormat
+                        && rowData[j].values[0].effectiveFormat.backgroundColor  ) {
                       const cellBackcolor = rowData[j].values[0].effectiveFormat.backgroundColor;
                       const colorValue = cellBackcolor.red * cellBackcolor.green;
                       if (colorValue === 1 && cellBackcolor.blue) continue;
