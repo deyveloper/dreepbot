@@ -61,6 +61,7 @@ async function listMajors(auth) {
         const collectedTodaysData = [];
         for (let i = 0; i < rowsLength; i++) {
             if (rows[i][12]) {
+                console.log(`Preparing ${rows[i][12]}`);
                 await sleep(1000);
                 const colorsCount = {
                     '0.6': 0, // Orange
