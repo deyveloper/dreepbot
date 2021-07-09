@@ -89,9 +89,9 @@ async function listMajors(auth) {
                 }
                 collectedTodaysData[i] = {
                     colors: {
-                        orange: colorsCount['0.6'],
-                        yellow: colorsCount['1'],
-                        blue: colorsCount['0.1107266458131488']
+                        orange: String(colorsCount['0.6']),
+                        yellow: String(colorsCount['1']),
+                        blue: String(colorsCount['0.1107266458131488'])
                     },
                     index: i
                 };
