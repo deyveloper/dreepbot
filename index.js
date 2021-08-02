@@ -1,6 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
+const { kill } = require('process');
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
@@ -51,7 +52,7 @@ async function listMajors(auth) {
   const sheets = google.sheets({version: 'v4', auth});
   sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'A3:P'
+    range: 'A3:S'
   },async (err, res) => {
     console.time('Result');
     if (err) return console.log('The API returned an error: ' + err);
@@ -60,15 +61,22 @@ async function listMajors(auth) {
     if (rowsLength) {
         const collectedTodaysData = [];
         for (let i = 0; i < rowsLength; i++) {
-            if (rows[i][12]) {
-                console.log(`Preparing ${rows[i][12]}`);
+            const _withUrlspreadsheetId = rows[i][18];
+            if (_withUrlspreadsheetId) {
+                let rowCountFunc;
+                if (rows[i][0] && rows[i][1]) {
+                  rowCountFunc = (a) => a >= parseInt(rows[i][0]) && a <= parseInt(rows[i][1]);
+                } else {
+                  rowCountFunc = (...args) => true;
+                }
+                const spreadsheetId = _withUrlspreadsheetId.split('/')[5];
+                console.log(`Preparing ${spreadsheetId}`);
                 await sleep(1000);
                 const colorsCount = {
                     '0.6': 0, // Orange
                     '1': 0, // Yellow
                     '0.1107266458131488': 0 // Blue
                 };
-                const spreadsheetId =  rows[i][12].split('/')[5];
                 const colorSheet = await sheets.spreadsheets.get({
                     spreadsheetId,
                     ranges: 'E:E',
@@ -77,7 +85,8 @@ async function listMajors(auth) {
                 const rowData = colorSheet.data.sheets[0].data[0].rowData;
                 const rowDataLength = rowData.length;
                 for (let j = 2; j < rowDataLength; j++) {
-                    if ( rowData[j].values
+                    if (!rowCountFunc(j + 1)) continue;
+                    if (rowData[j].values
                         && rowData[j].values[0]
                         && rowData[j].values[0].effectiveFormat
                         && rowData[j].values[0].effectiveFormat.backgroundColor  ) {
@@ -95,24 +104,31 @@ async function listMajors(auth) {
                     },
                     index: i
                 };
+                console.log(collectedTodaysData[i]);
             }
         }
         for (let i = 0; i < rowsLength; i++) {
-            /* Swapping yestardays data to todays data  */
-            if (rows[i][3] && rows[i][4] && rows[i][5]) {
-                rows[i][6] = rows[i][3];
-                rows[i][7] = rows[i][4];
-                rows[i][8] = rows[i][5];
+            /* Swapping day before yesterdays data to yesterdays data  */
+            if (rows[i][8] && rows[i][9] && rows[i][10]) {
+                rows[i][11] = rows[i][8];
+                rows[i][12] = rows[i][9];
+                rows[i][13] = rows[i][10];
             }
-            if (rows[i][12]) {
+            /* Swapping yestardays data to todays data  */
+            if (rows[i][5] && rows[i][6] && rows[i][7]) {
+                rows[i][8] = rows[i][5];
+                rows[i][9] = rows[i][6];
+                rows[i][10] = rows[i][7];
+            }
+            if (rows[i][18]) {
                 /* Updating todays data */
-                rows[i][3] = collectedTodaysData[i].colors.orange;
-                rows[i][4] = collectedTodaysData[i].colors.yellow;
-                rows[i][5] = collectedTodaysData[i].colors.blue;
+                rows[i][5] = collectedTodaysData[i].colors.orange;
+                rows[i][6] = collectedTodaysData[i].colors.yellow;
+                rows[i][7] = collectedTodaysData[i].colors.blue;
             }
         }
         const batchData = [{
-            range: 'A3:P',
+            range: 'A3:S',
             majorDimension: 'ROWS',
             values: rows
         }];
