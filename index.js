@@ -56,7 +56,7 @@ async function listMajors(auth) {
   },async (err, res) => {
     console.time('Result');
     if (err) return console.log('The API returned an error: ' + err);
-    const rows = res.data.values;
+    let rows = res.data.values;
     const rowsLength = rows.length;
     if (rowsLength) {
         const collectedTodaysData = [];
@@ -127,8 +127,9 @@ async function listMajors(auth) {
                 rows[i][7] = collectedTodaysData[i].colors.blue;
             }
         }
+	rows = rows.splice(3,12);
         const batchData = [{
-            range: 'A3:S',
+            range: 'F3:N',
             majorDimension: 'ROWS',
             values: rows
         }];
