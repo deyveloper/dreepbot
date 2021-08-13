@@ -133,6 +133,7 @@ async function listMajors(auth) {
             majorDimension: 'ROWS',
             values: rows
         }];
+        console.log(rows);
         const response = await sheets.spreadsheets.values.batchUpdate({
             spreadsheetId: sheetId,
             resource: {
