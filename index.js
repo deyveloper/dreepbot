@@ -129,7 +129,7 @@ async function listMajors(auth) {
         }
 
         const batchData = [{
-            range: 'F3:N',
+            range: 'A3:N',
             majorDimension: 'ROWS',
             values: rows
         }];
