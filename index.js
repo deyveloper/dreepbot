@@ -127,7 +127,7 @@ async function listMajors(auth) {
                 rows[i][7] = collectedTodaysData[i].colors.blue;
             }
         }
-	rows = rows.splice(3,12);
+
         const batchData = [{
             range: 'F3:N',
             majorDimension: 'ROWS',
