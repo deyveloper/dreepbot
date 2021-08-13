@@ -126,14 +126,16 @@ async function listMajors(auth) {
                 rows[i][6] = collectedTodaysData[i].colors.yellow;
                 rows[i][7] = collectedTodaysData[i].colors.blue;
             }
+            rows[i].splice(0, 5);
+            rows[i].splice(9, 16);
         }
 
         const batchData = [{
-            range: 'A3:N',
+            range: 'F3:N',
             majorDimension: 'ROWS',
             values: rows
         }];
-        console.log(rows);
+
         const response = await sheets.spreadsheets.values.batchUpdate({
             spreadsheetId: sheetId,
             resource: {
