@@ -83,7 +83,7 @@ async function listMajors(auth) {
                     includeGridData: true
                 });
                 const rowData = colorSheet.data.sheets[0].data[0].rowData;
-                const rowDataLength = rowData.length;
+                const rowDataLength = rowData ? rowData.length : 0;
                 for (let j = 2; j < rowDataLength; j++) {
                     if (!rowCountFunc(j + 1)) continue;
                     if (rowData[j].values
